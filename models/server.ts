@@ -2,22 +2,36 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import userRoutes from '../components/user.routes';
 
+import db from '../db/connection';
+
 class Server {
 
   private app: Application;
   private port: string;
   private apiPaths = {
     users: '/api/users'
-  }
+  };
 
   constructor() {
     this.app = express();
     this.port = process.env.PORT || '8000';
 
+    this.dbConnection();
     this.middlewares();
-
-    //Definir rutas
     this.routes();
+  }
+
+  async dbConnection() {
+
+    try {
+      
+      await db.authenticate();
+      console.log('BD online');
+
+    } catch (error: any) {
+      throw new Error( error );
+    }
+
   }
 
   middlewares () {
